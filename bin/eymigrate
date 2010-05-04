@@ -1,5 +1,3 @@
-CONFIG_FILE = ".eymigrate.yml"
-
 begin
   require 'rubygems'
 rescue LoadError
@@ -8,7 +6,8 @@ end
 
 require 'highline/import'
 require 'host_list'
-
+require 'etc'
+CONFIG_FILE = File.join Etc.getpwuid.dir, ".eymigrate.yml"
 HostList.config_file = CONFIG_FILE
 
 def help_text(exit_code = 0)
@@ -16,6 +15,7 @@ def help_text(exit_code = 0)
   puts """USAGE: #{script_name} on
        #{script_name} off
        #{script_name} list
+       #{script_name} configure
 """
   exit(exit_code)
 end
@@ -33,8 +33,12 @@ def display_hosts
   say "----------------------------"
   say "- Existing entries         -"
   say "----------------------------"
-  HostList.each do |host, ip|
-    say formatted_entry(host, ip)
+  if HostList.has_entries?    
+    HostList.each do |host, ip|
+      say formatted_entry(host, ip)
+    end
+  else
+    say "No IP mappings in place"
   end
   say "----------------------------"
 end
@@ -91,8 +95,12 @@ def edit_menu
       say "----------------------------"
       say "- Existing entries         -"
       say "----------------------------"
-      HostList.each do |host, ip|
-        menu.choice(formatted_entry(host, ip)) { |c| edit_host(c.match(/^(\w|\.)+/)[0]) }
+      if HostList.has_entries?    
+        HostList.each do |host, ip|
+          menu.choice(formatted_entry(host, ip)) { |c| edit_host(c.match(/^(\w|\.)+/)[0]) }
+        end
+      else
+        say "No IP mappings in place"
       end
       say "----------------------------"
       
@@ -110,8 +118,12 @@ def delete_menu
       say "----------------------------"
       say "- Existing entries         -"
       say "----------------------------"
-      HostList.each do |host, ip|
-        menu.choice(formatted_entry(host, ip)) { |c| delete_host(c.match(/^(\w|\.)+/)[0]) }
+      if HostList.has_entries?    
+        HostList.each do |host, ip|
+          menu.choice(formatted_entry(host, ip)) { |c| delete_host(c.match(/^(\w|\.)+/)[0]) }
+        end
+      else
+        say "No IP mappings in place"
       end
       say "----------------------------"
       

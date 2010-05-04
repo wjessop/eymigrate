@@ -32,7 +32,6 @@ class HostList
       rescue => e
         puts "Error adding entry: #{e}"
       end
-      
     end
     
     def update(host, ip)
@@ -61,6 +60,11 @@ class HostList
       each do |host, ip|
         Host.delete(host) if Host.find_by_host(host)
       end
+    end
+    
+    def has_entries?
+      read_entries
+      @@entries.size > 0
     end
   
     private

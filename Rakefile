@@ -6,11 +6,12 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "eymigrate"
     gem.summary = %Q{EY Migration tool}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.description = %Q{simple gem for helping migrate EY customers}
     gem.email = "wjessop@engineyard.com"
     gem.homepage = "http://github.com/wjessop/eymigrate"
     gem.authors = ["wjessop"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    gem.add_dependency 'ghost'
+    gem.add_dependency 'highline'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

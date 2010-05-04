@@ -1,6 +1,6 @@
 = eymigrate
 
-Description goes here.
+simple gem for helping migrate EY customers
 
 == Note on Patches/Pull Requests
  
