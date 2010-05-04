@@ -163,4 +163,14 @@ when 'list'
   list_mappings
 when 'configure'
   main_menu
+when 'moo'
+puts <<EOF
+         (__)
+         (oo)
+   /------\\/
+  / |    ||
+ *  /\\---/\\ 
+    ~~   ~~
+...."Have you mooed today?"...
+EOF
 end
