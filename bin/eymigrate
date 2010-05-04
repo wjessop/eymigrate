@@ -1,0 +1,154 @@
+CONFIG_FILE = ".eymigrate.yml"
+
+begin
+  require 'rubygems'
+rescue LoadError
+  # tra-la-la
+end
+
+require 'highline/import'
+require 'host_list'
+
+HostList.config_file = CONFIG_FILE
+
+def help_text(exit_code = 0)
+  script_name = File.basename $0
+  puts """USAGE: #{script_name} on
+       #{script_name} off
+       #{script_name} list
+"""
+  exit(exit_code)
+end
+
+def config_file?
+  File.exists? CONFIG_FILE
+end
+
+def formatted_entry(host, ip)
+  # puts "#{domain}: #{ip}"
+  sprintf("%-20s -> #{ip}", host)
+end
+
+def display_hosts
+  say "----------------------------"
+  say "- Existing entries         -"
+  say "----------------------------"
+  HostList.each do |host, ip|
+    say formatted_entry(host, ip)
+  end
+  say "----------------------------"
+end
+
+def add_host
+  host = ask("Please enter the hostname (eg. www.mycorp.com): ")
+  ip = ask("Please enter the ip address (eg. 127.0.0.1): ")
+  HostList.add(host, ip)
+end
+
+def edit_host(host)
+  ip = ask("Enter the new IP (eg. 127.0.0.1): ")
+  HostList.update(host, ip)
+end
+
+def delete_host(host)
+  HostList.remove(host)
+end
+
+##########################################
+# 
+# Menus
+# 
+##########################################
+
+def main_menu
+  if config_file?
+    
+  end
+  
+  exit = false
+  begin
+    
+    display_hosts
+    
+    choose do |menu|
+      menu.select_by = :index
+      menu.prompt = "Where would you like to go today?"
+    
+      menu.choice("Add hostname") { add_host }
+      menu.choice("Edit hostname") { edit_menu }
+      menu.choice("Delete hostname") { delete_menu }
+      menu.choice(:quit) { exit = true }
+    end
+  end while exit == false
+end
+
+def edit_menu
+  exit = false
+  begin
+    choose do |menu|
+      menu.select_by = :index
+      menu.prompt = "Choose a hostname to edit:"
+      say "----------------------------"
+      say "- Existing entries         -"
+      say "----------------------------"
+      HostList.each do |host, ip|
+        menu.choice(formatted_entry(host, ip)) { |c| edit_host(c.match(/^(\w|\.)+/)[0]) }
+      end
+      say "----------------------------"
+      
+      menu.choice(:back) { exit = true }
+    end
+  end while exit == false
+end
+
+def delete_menu
+  exit = false
+  begin
+    choose do |menu|
+      menu.select_by = :index
+      menu.prompt = "Choose a hostname delete:"
+      say "----------------------------"
+      say "- Existing entries         -"
+      say "----------------------------"
+      HostList.each do |host, ip|
+        menu.choice(formatted_entry(host, ip)) { |c| delete_host(c.match(/^(\w|\.)+/)[0]) }
+      end
+      say "----------------------------"
+      
+      menu.choice(:back) { exit = true }
+    end
+  end while exit == false
+  
+end
+
+##########################################
+
+if ARGV.size.zero? || ['-h', '--help', 'help'].include?(ARGV.first)
+  help_text
+end
+
+def list_mappings
+  HostList.each do |host, ip|
+    puts formatted_entry(host, ip)
+  end
+end
+
+case ARGV[0]
+when 'on'
+  if config_file?
+    puts "Applying hostname mappings:"
+    list_mappings
+    HostList.apply
+  else
+    main_menu
+  end
+when 'off'
+  puts "Reversing hostname mappings:"
+  list_mappings
+  HostList.unapply
+when 'list'
+  puts "Current hostname mappings:"
+  list_mappings
+when 'configure'
+  main_menu
+end
