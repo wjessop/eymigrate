@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/eymigrate",
+     "eymigrate.gemspec",
      "lib/host_list.rb"
   ]
   s.homepage = %q{http://github.com/wjessop/eymigrate}
