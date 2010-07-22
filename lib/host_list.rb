@@ -35,6 +35,8 @@ class HostList
     end
     
     def update(host, ip)
+      Host.delete(host)
+      Host.add(host,ip)
       set_entry(host,ip)
     end
     
