@@ -30,9 +30,9 @@ def formatted_entry(host, ip)
 end
 
 def display_hosts
-  say "----------------------------"
-  say "- Existing entries         -"
-  say "----------------------------"
+  say "--------------------------------------------------------"
+  say "- Existing entries                                     -"
+  say "--------------------------------------------------------"
   if HostList.has_entries?    
     HostList.each do |host, ip|
       say formatted_entry(host, ip)
@@ -40,7 +40,7 @@ def display_hosts
   else
     say "No IP mappings in place"
   end
-  say "----------------------------"
+  say "--------------------------------------------------------"
 end
 
 def add_host
@@ -74,6 +74,11 @@ def main_menu
     
     display_hosts
     
+		say "* Depending on your system these these rules may not   *"
+		say "* persist across reboots, run `eymigrate on` to re-add *"
+		say '* the rules and always check you are accessing the     *'
+		say "* servers you think you are.                           *"
+		say "--------------------------------------------------------"
     choose do |menu|
       menu.select_by = :index
       menu.prompt = "Where would you like to go today?"
@@ -92,9 +97,9 @@ def edit_menu
     choose do |menu|
       menu.select_by = :index
       menu.prompt = "Choose a hostname to edit:"
-      say "----------------------------"
-      say "- Existing entries         -"
-      say "----------------------------"
+      say "--------------------------------------------------------"
+      say "- Existing entries                                     -"
+      say "--------------------------------------------------------"
       if HostList.has_entries?    
         HostList.each do |host, ip|
           menu.choice(formatted_entry(host, ip)) { |c| edit_host(c.match(/^(\w|\.)+/)[0]) }
@@ -102,7 +107,7 @@ def edit_menu
       else
         say "No IP mappings in place"
       end
-      say "----------------------------"
+      say "--------------------------------------------------------"
       
       menu.choice(:back) { exit = true }
     end
@@ -115,9 +120,9 @@ def delete_menu
     choose do |menu|
       menu.select_by = :index
       menu.prompt = "Choose a hostname delete:"
-      say "----------------------------"
-      say "- Existing entries         -"
-      say "----------------------------"
+      say "--------------------------------------------------------"
+      say "- Existing entries                                     -"
+      say "--------------------------------------------------------"
       if HostList.has_entries?    
         HostList.each do |host, ip|
           menu.choice(formatted_entry(host, ip)) { |c| delete_host(c.match(/^(\w|\.)+/)[0]) }
@@ -125,7 +130,7 @@ def delete_menu
       else
         say "No IP mappings in place"
       end
-      say "----------------------------"
+      say "--------------------------------------------------------"
       
       menu.choice(:back) { exit = true }
     end
